@@ -79,3 +79,30 @@ def main():
 
 if __name__ == '__main__':
    main()
+###############################################################################
+
+## audio.py
+
+
+# hides pygame welcome prompt to stdout
+import os, sys
+with open(os.devnull, 'w') as f:
+    oldstdout = sys.stdout
+    sys.stdout = f
+
+    import pygame
+
+    sys.stdout = oldstdout
+
+import wave
+
+file = 'test.wav'
+wav = wave.open(file)
+freq = wav.getframerate()
+
+pygame.mixer.init(frequency=freq)
+pygame.mixer.music.load(file)
+pygame.mixer.music.play()
+
+while pygame.mixer.music.get_busy() == True:
+    continue
