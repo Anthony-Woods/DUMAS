@@ -1,6 +1,11 @@
 from PyQt5 import QtWidgets
 from ui import Ui_MainWindow
-import sys
+import os, sys
+import serial
+import json
+import pygame
+
+#############################################################################
 
 class RunGUI(QtWidgets.QMainWindow):
     def __init__(self):
@@ -9,16 +14,6 @@ class RunGUI(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-def main():
-    app = QtWidgets.QApplication(sys.argv)
-
-    window = RunGUI()
-    window.show()
-
-    sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()
 ##############################################################################
 # data_test.py
   
@@ -26,25 +21,23 @@ if __name__ == '__main__':
 # needs task parallelism
 
 # import pygame and mute awkward stdout message
-import os, sys
 with open(os.devnull, 'w') as f:
    oldstdout = sys.stdout
    sys.stdout = f
-
-   import pygame
-
    sys.stdout = oldstdout
 
-import wave
-import thread # not yet implmented
-
 # for receiving data from warning subsystem
-import serial
-import json
-
 ser = serial.Serial('/dev/ttyACM0', 115200)
 
 def main():
+    
+   app = QtWidgets.QApplication(sys.argv)
+
+   window = RunGUI()
+   window.show()
+
+   sys.exit(app.exec_())
+    
    file = 'test.wav'
    wav = wave.open(file)
    freq = wav.getframerate()
@@ -76,33 +69,35 @@ def main():
          pygame.mixer.music.play()
          while pygame.mixer.music.get_busy() == True:
             continue
+            
+            
+            
+#####################################################################################            
+        ## audio.py 
+        # hides pygame welcome prompt to stdout
+        with open(os.devnull, 'w') as f:
+            oldstdout = sys.stdout
+            sys.stdout = f
+
+
+            sys.stdout = oldstdout
+
+
+
+        file = 'test.wav'
+        wav = wave.open(file)
+        freq = wav.getframerate()
+
+        pygame.mixer.init(frequency=freq)
+        pygame.mixer.music.load(file)
+        pygame.mixer.music.play()
+
+        while pygame.mixer.music.get_busy() == True:
+            continue
+    
 
 if __name__ == '__main__':
    main()
-###############################################################################
-
-## audio.py
 
 
-# hides pygame welcome prompt to stdout
-import os, sys
-with open(os.devnull, 'w') as f:
-    oldstdout = sys.stdout
-    sys.stdout = f
 
-    import pygame
-
-    sys.stdout = oldstdout
-
-import wave
-
-file = 'test.wav'
-wav = wave.open(file)
-freq = wav.getframerate()
-
-pygame.mixer.init(frequency=freq)
-pygame.mixer.music.load(file)
-pygame.mixer.music.play()
-
-while pygame.mixer.music.get_busy() == True:
-    continue
