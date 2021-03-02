@@ -9,6 +9,9 @@ import pygame
 import sys, os
 
 ###############################################################################
+## Name: RunGUI()
+## Description: Class for GUI object to execute the display
+###############################################################################
 class RunGUI(QtWidgets.QMainWindow):
     def __init__(self):
         super(RunGUI, self).__init__()
@@ -16,45 +19,24 @@ class RunGUI(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        
+        
 def main():
+    
+    ser = serial.Serial('/dev/ttyACM0', 115200)
     app = QtWidgets.QApplication(sys.argv)
-
     window = RunGUI()
     window.show()
+    file = 'test.wav'
+    wav = wave.open(file)
+    freq = wav.getframerate()
 
-    sys.exit(app.exec_())
+    pygame.mixer.init(frequency=freq)
+    pygame.mixer.music.load(file)
 
-##############################################################################
-# data_test.py
-  
-# playing audio currently blocks the data receiving
-# needs task parallelism
-
-# import pygame and mute awkward stdout message
-
-with open(os.devnull, 'w') as f:
-   oldstdout = sys.stdout
-   sys.stdout = f
-
-   import pygame
-
-   sys.stdout = oldstdout
-
-
-
-ser = serial.Serial('/dev/ttyACM0', 115200)
-
-###############################################################################
-
-def main():
-   file = 'test.wav'
-   wav = wave.open(file)
-   freq = wav.getframerate()
-
-   pygame.mixer.init(frequency=freq)
-   pygame.mixer.music.load(file)
-
-   while(1):
+    
+ ###############################################################################  
+    while(1):
       data = ser.readline()
 
       # json.loads(data) parses the json string stored in the data
@@ -78,8 +60,23 @@ def main():
          pygame.mixer.music.play()
          while pygame.mixer.music.get_busy() == True:
             continue
-            
-###############################################################################            
+    
+ 
+
+##############################################################################
+    # data_test.py
+    # playing audio currently blocks the data receiving
+    # needs task parallelism
+    # import pygame and mute awkward stdout message
+
+    with open(os.devnull, 'w') as f:
+       oldstdout = sys.stdout
+       sys.stdout = f
+
+       sys.stdout = oldstdout
+
+###############################################################################           
+          
         ## audio.py
         # hides pygame welcome prompt to stdout
 
@@ -101,6 +98,9 @@ def main():
 
         while pygame.mixer.music.get_busy() == True:
             continue
+            
+            
+   sys.exit(app.exec_())
 
 if __name__ == '__main__':
    main()
