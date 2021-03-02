@@ -8,6 +8,7 @@ import json
 import pygame
 import sys, os
 
+###############################################################################
 class RunGUI(QtWidgets.QMainWindow):
     def __init__(self):
         super(RunGUI, self).__init__()
@@ -43,7 +44,7 @@ with open(os.devnull, 'w') as f:
 
 ser = serial.Serial('/dev/ttyACM0', 115200)
 
-
+###############################################################################
 
 def main():
    file = 'test.wav'
@@ -78,7 +79,7 @@ def main():
          while pygame.mixer.music.get_busy() == True:
             continue
             
-            
+###############################################################################            
         ## audio.py
         # hides pygame welcome prompt to stdout
 
@@ -103,6 +104,6 @@ def main():
 
 if __name__ == '__main__':
    main()
-###############################################################################
+
 
 
